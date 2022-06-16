@@ -121,3 +121,36 @@ activity <- function(y,m)
       a <- y*m  
 }
 
+printEverything <- function(...)
+{
+      ## Mineral dissolving in water
+      cat("MINERALS DISSOLVING IN WATER\n")
+      cat("Reactants ⇌ Products\n")
+      cat("  ",reactant, "⇌", molesA, productA,"+", molesB, productB,"+", molesC, productC, "\n",sep=" ")
+      cat("\nGibbs Free Energy Calculations\n")
+      cat("  ΔG = Products - Reactants")
+      cat("\n  ΔG = (ΔGa + ΔGb + ΔGc) - (ΔGr)\n")
+      cat("  ΔG = (", ΔGa, "+", ΔGb, "+", ΔGc, ") - (", ΔGr, ")", sep="")
+      cat("  ΔG =", ΔGtotalSolid, "kJ/mol\n")
+      if(ΔGtotalSolid < 0){cat("   This process is spontaneous.\n")}
+      if(ΔGtotalSolid > 0){cat("   This process is not spontaneous.\n")}
+      if(ΔGtotalSolid == 0){cat("   This process is at equilibrium.\n")}
+      cat("\nK Equilibrium Calculation\n")
+      cat("  Ksp = 10^", logKsp,"\n")
+      
+      ## Aqueous complex
+      cat("\nAQUEOUS COMPLEX STABILITY\n")
+      cat("Reactants ⇌ Products\n")
+      cat("  ",cation," + ", anion, "⇌", aqComplex, "\n",sep=" ")
+      cat("\nGibbs Free Energy Calculations")
+      cat("\n  ΔG = Products - Reactants")
+      cat("\n  ΔG = (ΔGaq)-(ΔGcation + ΔGanion)\n")
+      cat("  ΔG = (", ΔGaq, ") - (", ΔGcation, "+", ΔGanion, ")", sep="")
+      cat("  ΔG =", ΔGtotalAq, "kJ/mol\n")
+      if(ΔGtotalAq < 0){cat("   This process is spontaneous.\n")}
+      if(ΔGtotalAq > 0){cat("   This process is not spontaneous.\n")}
+      if(ΔGtotalAq == 0){cat("   This process is at equilibrium.\n")}
+      cat("\nAqueous Complex Stability")
+      cat("\n Kstab = 10^", logKstab)
+      cat("\n New solubility = ", solubility)
+}
