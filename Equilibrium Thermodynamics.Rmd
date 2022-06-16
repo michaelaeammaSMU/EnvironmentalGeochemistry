@@ -12,44 +12,30 @@ In the real world, systems can exist in several states, *unstable, metastable, a
 ### Gibbs Free Energy For a Reaction
 To find the total ΔG for a reaction at a given T and P, the total free energies of the reactants are subtracted from that of the reactants.
 ```{r, message=FALSE}
-gibbsReaction <- function(solidDescription)
+source("allFunctions.R")
+gibbsReaction <- function(solidDescription = list(),...)
 {
       E.units("J")
       
       ## extract reactant G
       reactant <- data.frame(subcrt(reactant, reactantState, T = Temp, P = Pres))
       nameReactant <- paste("reactant$out.", reactant$species.name, ".G",sep ="")
-      ΔGr <- round(eval(parse(text = nameReactant[1]))/1000,3)
+      ΔGr <<- round(eval(parse(text = nameReactant[1]))/1000,3)
       
       ## extract product G
       a <- data.frame(subcrt(productA, T = Temp, P = Pres))
       nameA <- paste("a$out.", str_replace(productA, "[\\+\\-\\*]", "."), ".G",sep ="")
-      ΔGa <- round(eval(parse(text = nameA[1]))/1000,3)
+      ΔGa <<- round(eval(parse(text = nameA[1]))/1000,3)
 
       b <- data.frame(subcrt(productB, T = Temp, P = Pres))
       nameB <- paste("b$out.", str_replace(productB, "[\\+\\-\\*]", "."), ".G",sep ="")
-      ΔGb <- round(eval(parse(text = nameB[1]))/1000,3)
+      ΔGb <<- round(eval(parse(text = nameB[1]))/1000,3)
       
       c <- data.frame(subcrt(productC, T = Temp, P = Pres))
       nameC <- paste("c$out.", str_replace(productC, "[\\+\\-\\*]", "."), ".G",sep ="")
-      ΔGc <- round(eval(parse(text = nameC[1]))/1000,3)
+      ΔGc <<- round(eval(parse(text = nameC[1]))/1000,3)
       
-      ## print chemical formula
-      cat("REACTION DESCRIPTION")
-      cat("  Reactants ⇌ Products\n")
-      cat("  ",reactant$species.name, "⇌", molesA, productA,"+", molesB, productB,"+", molesC, productC, "\n",sep=" ")
-      
-      cat("\nGIBBS FREE ENERGY CALCULATIONS")
-      cat("\n  ΔG = Products - Reactants")
-      cat("\n  ΔG = (ΔGa + ΔGb + ΔGc) - (ΔGr)\n")
-      
-      cat("  ΔG = (", ΔGa, "+", ΔGb, "+", ΔGc, ") - (", ΔGr, ")", sep="")
-      ΔGtotal <- round(((molesA*ΔGa)+(molesB*ΔGb)+(molesC*ΔGc))-(molesR*ΔGr),3)
-      cat("  ΔG =", ΔGtotal, "kJ/mol\n")
-      if(ΔGtotal < 0){cat("   This process is spontaneous.\n")}
-      if(ΔGtotal > 0){cat("   This process is not spontaneous.\n")}
-      if(ΔGtotal == 0){cat("   This process is at equilibrium.\n")}
-      return(ΔGtotal)
+      ΔGtotalSolid <<- round(((molesA*ΔGa)+(molesB*ΔGb)+(molesC*ΔGc))-(molesR*ΔGr),3)
 }
 ```
 
@@ -59,13 +45,10 @@ gibbsReaction <- function(solidDescription)
 
 *Note: K~sp~ describes the solubility of a substance while K~eq~ describes the state of equilibrium
 ```{r, message=FALSE}
-equilibriumConstant <- function(solidDescription = list())
+equilibriumConstant <- function(solidDescription = list(),...)
 {
       ΔG <- gibbsReaction(solidDescription)
-      
-      logKsp <- round((-1*ΔG)/5.708,3)
-      cat("\nK EQUILIBRIUM")
-      cat("\n  Ksp = 10^", logKsp)
+      logKsp <<- round((-1*ΔG)/5.708,3)
 }
 ```
 
@@ -99,40 +82,25 @@ With increasing temperatures, reactions move in the direction that consumes ener
 3. The solubility of compounds forming an aqueous species is greater that that of the predicted solubility for the equivalent solid compound. This is because some of the ions released during the solid dissolution process are taken up by the aqueous complex:   [AB~(aq)~] = K~stab~ * [A^+^][B^-^] = K~stab~ * K~sp~
             
 How does the solubility of a solid change with the formation of an aqueous complex?
-```{r}
-Kstab <- function(aqDescription = list())
+```{r, message=FALSE}
+Kstab <- function(aqDescription = list(),...)
 {
       ## extract reactant G
       aqComplex <- data.frame(subcrt(aqComplex, aqComplexState, T = Temp, P = Pres))
       nameAqComplex <- paste("aqComplex$out.", aqComplex$species.name, ".G",sep ="")
-      ΔGaq <- round(eval(parse(text = nameAqComplex))/1000,3)
+      ΔGaq <<- round(eval(parse(text = nameAqComplex))/1000,3)
       
       ## extract product G
       cation <- data.frame(subcrt(cation, T = Temp, P = Pres))
       nameCation <- paste("cation$out.", str_replace(cation, "[\\+\\-\\*]", "."), ".G",sep ="")
-      print(nameCation[1])
-      ΔGcation <- round(eval(parse(text = nameCation[1]))/1000,3)
+      ΔGcation <<- round(eval(parse(text = nameCation[1]))/1000,3)
 
       anion <- data.frame(subcrt(anion, T = Temp, P = Pres))
       nameAnion <- paste("anion$out.", str_replace(anion, "[\\+\\-\\*]", "."), ".G",sep ="")
-      ΔGanion <- round(eval(parse(text = nameAnion[1]))/1000,3) 
-      
-      ## print chemical formula
-      cat("REACTION DESCRIPTION")
-      cat("  Reactants ⇌ Products\n")
-      cat("  ",cation$species.name," + ", anion$species.name, "⇌", aqComplex$species.name, "\n",sep=" ")
-      
-      cat("\nGIBBS FREE ENERGY CALCULATIONS")
-      cat("\n  ΔG = Products - Reactants")
-      cat("\n  ΔG = (ΔGcation + ΔGanion) - (ΔGaq)\n")
-      
-      cat("  ΔG = (", ΔGcation, "+", ΔGanion, ") - (", ΔGaq, ")", sep="")
-      ΔGtotal <- round(((molesCation*ΔGcation)+(molesAnion*ΔGanion))-(molesAq*ΔGaq),3)
-      cat("  ΔG =", ΔGtotal, "kJ/mol\n")
-      
-      logKstab <- round((-1*ΔGtotal)/5.708,3)
-      cat("\nK AQ COMPLEX STABILITY")
-      cat("\n  Kstab = 10^", logKstab)
+      ΔGanion <<- round(eval(parse(text = nameAnion[1]))/1000,3) 
+
+      ΔGtotalAq <<- round((molesAq*ΔGaq)-((molesCation*ΔGcation)+(molesAnion*ΔGanion)),3)
+      logKstab <<- round((-1*ΔGtotalAq)/5.708,3)
 }
 
 aqueousComplexFormation <- function(solidDescription = list(), aqDescription = list())
@@ -140,28 +108,49 @@ aqueousComplexFormation <- function(solidDescription = list(), aqDescription = l
       ## equilibrium for a solid
       Keq <- equilibriumConstant(solidDescription)
       Kstab <- Kstab(aqDescription)
+      solubility <<- (10^Keq)*(10^Kstab)
 }
 ```
 
 Describe the solid and aqueous complex of interest below.
-```{r}
-solidDescription = list(reactant = "gypsum",reactantState = "cr",molesR=1,
-                    productA = "Ca+2",molesA=1,
-                    productB = "SO4-2",molesB=1,
-                    productC = "water", molesC=2,
-                    Temp = 25,Pres = 1)
-
-aqDescription = list(aqComplex = "CaSO4", aqComplexState="aq", molesAq = 1, 
-                    cation = "Ca+2", molesCation = 1, 
-                    anion = "SO4-2", molesAnion = 1, 
-                    Temp = 25, Pres = 1)
-
-aqueousComplexFormation(solidDescription, aqDescription)
+```{r, message=FALSE}
+# Solid description
+      reactant <- "gypsum"
+      reactantState <- "cr"
+      molesR <- 1
+      productA <- "Ca+2"
+      molesA <- 1
+      productB <- "SO4-2"
+      molesB <- 1
+      productC <- "water"
+      molesC <- 2
+      Temp <- 25
+      Pres <- 1
+      
+#Aqueous complex description
+      aqComplex = "CaSO4"
+      aqComplexState="aq"
+      molesAq = 1
+      cation = "Ca+2"
+      molesCation = 1
+      anion = "SO4-2"
+      molesAnion = 1
+      Temp = 25
+      Pres = 1
 ```
 
+```{r, message=FALSE}
+solubility <- NULL
+solidDescription <- list(reactant,reactantState,molesR,productA,molesA,productB,molesB,productC,molesC,
+                        Temp,Pres)
 
+aqDescription <- list(aqComplex, aqComplexState, molesAq,cation, molesCation,anion,molesAnion, 
+                        Temp,Pres)
 
+results <- aqueousComplexFormation(solidDescription, aqDescription)
 
+printEverything(results)
+```
 
 
 
