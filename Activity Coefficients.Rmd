@@ -16,21 +16,23 @@ This departure is cause by two main behaviours:
 ```{r, message=FALSE}
 ionicStrength <- function(species = data.frame())
 {
-      print(species)
-      IS <- NULL
-     speciesCount <- nrow(species)
-     for(i in speciesCount)
+     IS <- is.integer(0)
+     for(i in 1:nrow(species))
      {
-           m <- species$strength
-           z <- species$charge
+           m <- species[i, "concentration"]
+           z <- species[i, "charge"]
            output <- m * z^2
+           IS <- IS + output
      }
-     IS <- IS + output
      solutionIonicStrength <- 0.5*IS
-     print(solutionIonicStrength)
+     cat("The solution ionic strength is", solutionIonicStrength)
 }
 
-species <- data.frame(species = c("a", "b", "c"), strength = c(4,2,6), charge = c(1,2,3))
+#This is where you would change the species characteristics
+species <- data.frame(species = c("a", "b", "c"), 
+                      concentration = c(4,2,6), 
+                      charge = c(1,2,3))
+
 ionicStrength(species)
 
 activity <- function(y,m)
