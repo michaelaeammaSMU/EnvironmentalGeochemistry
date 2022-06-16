@@ -10,13 +10,7 @@ editor_options:
   markdown: 
     wrap: 72
 ---
-<<<<<<< HEAD
-
 # The Laws of Thermodynamics
-
-=======
-# The Laws of Thermodynamics 
->>>>>>> f0bed09e7f58e235a69ea2ffad64f004d4437e93
 ### First Law of Thermodynamics
 
 *Energy cannot be created nor destroyed*
