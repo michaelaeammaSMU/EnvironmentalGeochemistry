@@ -1,6 +1,7 @@
 ---
 title: "Ch. 2 Equilibrium Thermodynamics and Kinetics"
 output:
+  word_document: default
   html_document:
     df_print: paged
 date: '2022-06-15'
