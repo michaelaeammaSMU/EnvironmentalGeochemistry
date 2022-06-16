@@ -9,31 +9,6 @@ date: '2022-06-14'
 # Equilibrium Thermodynamics
 In the real world, systems can exist in several states, *unstable, metastable, and stable*, where an unstable system reacts **spontaneously**, a metastable system requires a minimum **activation energy** to react, and a stable system has reached **equilibrium**. 
 
-#### Free Energy 
-The energy of a system approaching equilibrium is measured as **Gibbs free energy** at a constant T and P. Gibbs free energy is calculated for each species to derive the net ΔG (see gibbsReaction)
-```{r, message=FALSE}
-source("allFunctions.R")
-GibbsFreeEnergy <- function(dq,dw,dv,dp,q,w,v,p,t)
-{
-      ## pull functions from allFunctions.R
-      ΔE <- internalEnergy(dq, dw, dv, p)
-      print(paste("The change in energy is", ΔE, "."))
-      
-      ΔH <- systemEnthalpy(dq, dw, dp, dv, p, v)
-      print(paste("The change in enthalpy is", ΔH, "."))
-      
-      ΔS <- systemEntropy(dq,dw,dp,dv,p,v,t)
-      print(paste("The change in entropy is", ΔS, "."))
-      
-      ΔG <- ΔH - t*ΔS
-      print(paste("Therefore, the change in Gibbs free energy is", ΔG, "."))
-      
-      if(ΔG < 0){print("This process is spontaneous.")}
-      if(ΔG > 0){print("This process is not spontaneous.")}
-      if(ΔG == 0){print("This process is at equilibrium.")}
-}
-```
-
 ### Gibbs Free Energy For a Reaction
 To find the total ΔG for a reaction at a given T and P, the total free energies of the reactants are subtracted from that of the reactants.
 ```{r, message=FALSE}
@@ -166,7 +141,10 @@ aqueousComplexFormation <- function(solidDescription = list(), aqDescription = l
       Keq <- equilibriumConstant(solidDescription)
       Kstab <- Kstab(aqDescription)
 }
+```
 
+Describe the solid and aqueous complex of interest below.
+```{r}
 solidDescription = list(reactant = "gypsum",reactantState = "cr",molesR=1,
                     productA = "Ca+2",molesA=1,
                     productB = "SO4-2",molesB=1,
@@ -180,7 +158,6 @@ aqDescription = list(aqComplex = "CaSO4", aqComplexState="aq", molesAq = 1,
 
 aqueousComplexFormation(solidDescription, aqDescription)
 ```
-
 
 
 

@@ -15,19 +15,6 @@ editor_options:
 
 *Energy cannot be created nor destroyed*
 
-```{r, message=FALSE}
-      # define variables
-      dq <- "heat change"  # added or removed
-      dw <- "work change"  # done to or by the system
-      dp <- "pressure change"  # via work
-      dv <- "volume change"  # via work
-      q <- "heat constant"
-      w <- "work constant"
-      p <- "pressure constant"
-      v <- "volume constant"
-      t <- "temperature constant (K)"
-```
-
 **Energy** The internal energy of a system is the sum of the kinetic and
 potential energies of its constituent atoms. The *heat of formation* or
 *enthalpy of formation* is the enthalpy change that occurs what a
@@ -35,19 +22,19 @@ compound is formed from its elements. *Exothermic* reactions release
 heat energy and *endothermic* reactions use heat energy.
 
 ```{r, message=FALSE}
-internalEnergy <- function(dq,dw,dv, p)
+internalEnergy <- function(parameters = list(),...)
 {
-      # Energy change in a system
-      ΔE <- dq - dw       # change in energy by work or heat
-      ΔE <- dq - p*dv     # change in work by change in volume
+      # Energy change in a system by volume
+      ΔE <- dq - p*dv
 }
 ```
+
 
 **Enthalpy** Enthalpy is equal to heat flow when processes occur at
 constant pressure and the only work done is p-v work.
 
 ```{r, message=FALSE}
-systemEnthalpy <- function(dq,dw,dp,dv,p,v)
+systemEnthalpy <- function(parameters = list(),...)
 {
       # find ΔE
       ΔE <- internalEnergy(dq,dw,dv,p)
@@ -65,7 +52,7 @@ the direction of decreasing order.*
 The release of energy is always preferable to absorption.
 
 ```{r}
-systemEntropy <- function(dq,dw,dp,dv,p,v,t)
+systemEntropy <- function(parameters = list(),...)
 {
       if(length(v)==0){
       #using ΔE
@@ -80,21 +67,53 @@ systemEntropy <- function(dq,dw,dp,dv,p,v,t)
 }
 ```
 
-Alter input here to calculate the energy, enthalpy, and entropy of a
-system.
 
+**Gibbs Free Energy** The energy of a system approaching equilibrium is measured as *Gibbs free energy* at a constant T and P. Gibbs free energy is calculated for each species to derive the net ΔG.
 ```{r, message=FALSE}
-systemConditions <- function(dq,dw,dv,dp,q,w,v,p,t)
+GibbsFreeEnergy <- function(parameters = list(),...)
 {
-      ΔE <- internalEnergy(dq, dw, dv, p)
-      print(paste("The change in energy is", ΔE)) 
-      
       ΔH <- systemEnthalpy(dq, dw, dp, dv, p, v)
-      print(paste("The change in enthalpy is", ΔH))
-      
       ΔS <- systemEntropy(dq,dw,dp,dv,p,v,t)
-      print(paste("The change in entropy is", ΔS)) 
+      ΔG <- ΔH - t*ΔS
 }
+```
 
-systemConditions(dq=5,dw=3,dv=4,dp=7,q=4,w=3,v=NULL,p=1,t=132)
+Now, we can describe the system as a whole to determine whether a reaction is spontaneous.
+```{r, message=FALSE}
+systemConditions <- function(system = list(),...)
+{
+      ΔE <- internalEnergy(list(dq, dw, dv, p))
+      cat("The change in energy is ", ΔE, ".", sep = "") 
+      
+      ΔH <- systemEnthalpy(list(dq, dw, dp, dv, p, v))
+      cat("\nThe change in enthalpy is ", ΔH, ".", sep = "")
+      
+      ΔS <- systemEntropy(list(dq,dw,dp,dv,p,v,t))
+      cat("\nThe change in entropy is ", ΔS, ".", sep = "")
+      
+      ΔG <- GibbsFreeEnergy(list(dq,dw,dv,dp,q,w,v,p,t))
+      
+      cat("\nThe change in Gibbs free energy is ", ΔG, ".", sep = "")
+      if(ΔG < 0){cat("\nThus, this process is spontaneous.")}
+      if(ΔG > 0){cat("\nThus, this process is not spontaneous.")}
+      if(ΔG == 0){cat("\nThus, this process is at equilibrium.")}
+}
+```
+
+Let's practice! Describe your system here.
+```{r}
+# Please replace the numbers below.
+      dq <- 5           #heat change
+      dw <- 3           #work change
+      dp <- 4           #pressure change
+      dv <- 7           #volume change
+      q <- 4            #heat constant
+      w <- 3            #work constant
+      p <- 1            #pressure constant
+      v <- 4            #volume constant
+      t <- 23           #temperature constant (K)
+
+# Execute description      
+system <- list(dq, dw, dp, dv, q, w, p, v, t)
+systemConditions(system)
 ```
