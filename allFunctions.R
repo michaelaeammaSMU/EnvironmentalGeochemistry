@@ -116,7 +116,6 @@ ionicStrength <- function(species = data.frame())
       cat("The solution ionic strength is", solutionIonicStrength)
 }
 
-
 activity <- function(y,m)
 {
       a <- y*m  
