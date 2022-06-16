@@ -102,3 +102,23 @@ equilibriumConstant <- function(reactant,molesR,productA,molesA,productB,molesB,
       print(paste("Ksp = 10^", logKsp))
 }
 
+ionicStrength <- function(species = data.frame())
+{
+      IS <- is.integer(0)
+      for(i in 1:nrow(species))
+      {
+            m <- species[i, "concentration"]
+            z <- species[i, "charge"]
+            output <- m * z^2
+            IS <- IS + output
+      }
+      solutionIonicStrength <- 0.5*IS
+      cat("The solution ionic strength is", solutionIonicStrength)
+}
+
+
+activity <- function(y,m)
+{
+      a <- y*m  
+}
+
