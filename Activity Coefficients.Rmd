@@ -5,12 +5,8 @@ output:
     df_print: paged
 date: '2022-06-15'
 ---
-
+test
 # Calculation of Activity Coefficients
-<<<<<<< HEAD
-*In an ideal solution, activity would equal concentration.*
-
-=======
 *In an ideal solution, activity would equal concentration.* 
 ### Activity and Fugacity
 Activity (or fugacity for gasses), *a~i~* measures the departure of a system from ideal behavior and is related to concentration, *m~i~*, via the activity coefficient, *γ~i~*.
