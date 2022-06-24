@@ -7,7 +7,7 @@ output:
 date: '2022-06-14'
 ---
 # Equilibrium Thermodynamics
-In the real world, systems can exist in several states, *unstable, metastable, and stable*, where an unstable system reacts **spontaneously**, a metastable system requires a minimum **activation energy** to react, and a stable system has reached **equilibrium**. 
+In the real world, systems can exist in several states, namely, *unstable, metastable, and stable*, where an unstable system reacts **spontaneously**, a metastable system requires a minimum **activation energy** to react, and a stable system has reached **equilibrium**. 
 
 ### Gibbs Free Energy For a Reaction
 To find the total ΔG for a reaction at a given T and P, the total free energies of the reactants are subtracted from that of the reactants.
@@ -15,26 +15,15 @@ To find the total ΔG for a reaction at a given T and P, the total free energies
 source("allFunctions.R")
 gibbsReaction <- function(solidDescription = list(),...)
 {
-      E.units("J")
-      
       ## extract reactant G
-      reactant <- data.frame(subcrt(reactant, reactantState, T = Temp, P = Pres))
-      nameReactant <- paste("reactant$out.", reactant$species.name, ".G",sep ="")
-      ΔGr <<- round(eval(parse(text = nameReactant[1]))/1000,3)
+      ΔGr <<- getDeltaG(reactant, reactantState, T, P)
       
       ## extract product G
-      a <- data.frame(subcrt(productA, T = Temp, P = Pres))
-      nameA <- paste("a$out.", str_replace(productA, "[\\+\\-\\*]", "."), ".G",sep ="")
-      ΔGa <<- round(eval(parse(text = nameA[1]))/1000,3)
-
-      b <- data.frame(subcrt(productB, T = Temp, P = Pres))
-      nameB <- paste("b$out.", str_replace(productB, "[\\+\\-\\*]", "."), ".G",sep ="")
-      ΔGb <<- round(eval(parse(text = nameB[1]))/1000,3)
+      ΔGa <<- getDeltaG(productA, productState, T, P)
+      ΔGb <<- getDeltaG(productB, productState, T, P)
+      ΔGc <<- getDeltaG(productC, productState, T, P)
       
-      c <- data.frame(subcrt(productC, T = Temp, P = Pres))
-      nameC <- paste("c$out.", str_replace(productC, "[\\+\\-\\*]", "."), ".G",sep ="")
-      ΔGc <<- round(eval(parse(text = nameC[1]))/1000,3)
-      
+      ## calculate total G
       ΔGtotalSolid <<- round(((molesA*ΔGa)+(molesB*ΔGb)+(molesC*ΔGc))-(molesR*ΔGr),3)
 }
 ```
@@ -86,18 +75,11 @@ How does the solubility of a solid change with the formation of an aqueous compl
 Kstab <- function(aqDescription = list(),...)
 {
       ## extract reactant G
-      aqComplex <- data.frame(subcrt(aqComplex, aqComplexState, T = Temp, P = Pres))
-      nameAqComplex <- paste("aqComplex$out.", aqComplex$species.name, ".G",sep ="")
-      ΔGaq <<- round(eval(parse(text = nameAqComplex))/1000,3)
+      ΔGaq <<- getDeltaG(aqComplex, aqComplexState, T, P)
       
       ## extract product G
-      cation <- data.frame(subcrt(cation, T = Temp, P = Pres))
-      nameCation <- paste("cation$out.", str_replace(cation, "[\\+\\-\\*]", "."), ".G",sep ="")
-      ΔGcation <<- round(eval(parse(text = nameCation[1]))/1000,3)
-
-      anion <- data.frame(subcrt(anion, T = Temp, P = Pres))
-      nameAnion <- paste("anion$out.", str_replace(anion, "[\\+\\-\\*]", "."), ".G",sep ="")
-      ΔGanion <<- round(eval(parse(text = nameAnion[1]))/1000,3) 
+      ΔGcation <<- getDeltaG(cation, aqComplexState, T, P)
+      ΔGanion <<- getDeltaG(anion, aqComplexState, T, P)
 
       ΔGtotalAq <<- round((molesAq*ΔGaq)-((molesCation*ΔGcation)+(molesAnion*ΔGanion)),3)
       logKstab <<- round((-1*ΔGtotalAq)/5.708,3)
@@ -117,6 +99,7 @@ Describe the solid and aqueous complex of interest below.
 # Solid description
       reactant <- "gypsum"
       reactantState <- "cr"
+      productState <- "aq"
       molesR <- 1
       productA <- "Ca+2"
       molesA <- 1
@@ -141,8 +124,8 @@ Describe the solid and aqueous complex of interest below.
 
 ```{r, message=FALSE}
 solubility <- NULL
-solidDescription <- list(reactant,reactantState,molesR,productA,molesA,productB,molesB,productC,molesC,
-                        Temp,Pres)
+solidDescription <- list(reactant,reactantState,productState,molesR,productA,molesA,productB,molesB,productC,molesC,
+                         Temp,Pres)
 
 aqDescription <- list(aqComplex, aqComplexState, molesAq,cation, molesCation,anion,molesAnion, 
                         Temp,Pres)

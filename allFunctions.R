@@ -153,4 +153,18 @@ printEverything <- function(...)
       cat("\nAqueous Complex Stability")
       cat("\n Kstab = 10^", logKstab)
       cat("\n New solubility = ", solubility)
+}     
+
+getDeltaG <- function(compound, compoundState, T, P)
+{
+      E.units("J")
+      
+      DF <- data.frame(subcrt(compound, compoundState, T = Temp, P = Pres))
+      nameCompound <- name(DF)
+      G <<- round(eval(parse(text = nameCompound[1]))/1000,3)
+}
+
+name <- function(DF = data.frame())
+{
+      compoundName <- paste("DF$out.", str_replace(DF$species.name, "[\\+\\-\\*]", "."), ".G",sep ="")
 }
